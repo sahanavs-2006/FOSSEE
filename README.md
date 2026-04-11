@@ -95,13 +95,3 @@ For forms, instead of rewriting form handling in React (which would require reim
 
 ---
 
-## Submission Checklist
-
-- [x] Code is readable and well-structured
-- [x] README includes reasoning answers and setup instructions
-- [x] Before-and-after screenshots included in `docs/`
-- [x] React JavaScript library used (animated stats widget with hooks)
-- [x] Mobile-first responsive design
-- [x] Accessible form labels, focus states, and contrast
-- [x] SEO meta tags (description, keywords, Open Graph, Twitter Card)
-- [x] Performance-focused (CSS transitions, no JS animations, CDN React)
