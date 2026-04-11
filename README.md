@@ -42,12 +42,7 @@ Open http://127.0.0.1:8000/ in your browser.
 |--------|-------|
 | ![Before Login](docs/before_login.png) | ![After Login](docs/after_login.png) |
 
-### Registration Form
 
-| Before | After |
-|--------|-------|
-| ![Before Register](docs/before_register.png) | ![After Register](docs/after_register.png) |
-|-------------|------------|
 
 ### Statistics Page
 
