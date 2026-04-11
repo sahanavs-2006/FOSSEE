@@ -1,57 +1,268 @@
 {% extends 'workshop_app/base.html' %}
 
 {% block title %}
-    Login - FOSSEE Workshops
+    Login — FOSSEE Workshops
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6 col-md-offset-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h1 class="h4 mb-3 text-center">Sign in to your account</h1>
-                        <form class="px-3 py-3" method="post" aria-label="Login form">
-                        {% csrf_token %}
-                        {% if form.errors %}
-                            {% for field in form %}
-                                {% for error in field.errors %}
-                                    <div class="alert alert-dismissible alert-danger" role="alert">
-                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                            <i class="fa fa-close" aria-hidden="true"></i>
-                                        </button>
-                                        <strong>{{ error|escape }}</strong>
-                                    </div>
-                                {% endfor %}
-                            {% endfor %}
-                            {% for error in form.non_field_errors %}
-                                <div class="alert alert-dismissible alert-danger" role="alert">
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <i class="fa fa-close" aria-hidden="true"></i>
-                                    </button>
-                                    <strong>{{ error|escape }}</strong>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
-                        <div class="form-group">
-                          <label for="id_username">Username</label>
-                          {{ form.username }}
-                        </div>
-                        <div class="form-group">
-                          <label for="id_password">Password</label>
-                          {{ form.password }}
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-block">Sign in</button>
-                        </form>
-                        <hr>
-                        <div class="text-center">
-                            <a href="{% url 'workshop_app:register' %}">New around here? Sign up</a>
-                            <br>
-                            <a href="{% url 'password_reset' %}" class="text-muted mt-2 d-inline-block">Forgot password?</a>
-                        </div>
-                    </div>
-                </div>  
+<style>
+    .login-page {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0 1rem;
+    }
+    .login-card {
+        width: 100%;
+        max-width: 440px;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+        padding: 2.5rem 2.5rem 1.8rem;
+        margin-bottom: 2.5rem;
+    }
+    .login-card h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 0.3rem;
+    }
+    .login-card .subtitle {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        margin-bottom: 1.8rem;
+    }
+    .login-field { margin-bottom: 1.2rem; }
+    .login-field label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #34495e;
+        margin-bottom: 6px;
+    }
+    .login-field input {
+        width: 100%;
+        padding: 11px 14px;
+        border: 1.5px solid #dce1e7;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-family: 'Inter', sans-serif;
+        background: #fafbfc;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        box-sizing: border-box;
+    }
+    .login-field input:focus {
+        outline: none;
+        border-color: #4CAF50;
+        box-shadow: 0 0 0 3px rgba(76,175,80,0.12);
+        background: #fff;
+    }
+    .login-btn {
+        width: 100%;
+        padding: 13px;
+        background: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+        font-family: 'Inter', sans-serif;
+        margin-top: 0.5rem;
+    }
+    .login-btn:hover {
+        background: #43A047;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 14px rgba(76,175,80,0.3);
+    }
+    .login-links {
+        border-top: 1px solid #f0f0f0;
+        padding-top: 1.2rem;
+        margin-top: 1.2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .login-links a {
+        color: #4CAF50;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    .login-links a:hover { text-decoration: underline; }
+    .alert-danger {
+        background: #fdecea;
+        border: 1px solid #f5c2bf;
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin-bottom: 1rem;
+        font-size: 0.88rem;
+        color: #c0392b;
+    }
+    /* React stats banner */
+    #react-stats-banner {
+        width: 100%;
+        max-width: 840px;
+    }
+    @media (max-width: 500px) {
+        .login-card { padding: 1.5rem 1rem; }
+    }
+</style>
+
+<div class="login-page">
+    <div class="login-card">
+        <h2>Welcome Back</h2>
+        <p class="subtitle">Sign in to your FOSSEE Workshops account</p>
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {% if form.errors %}
+                <div class="alert-danger">
+                    Invalid username or password. Please try again.
+                </div>
+            {% endif %}
+
+            <div class="login-field">
+                <label for="{{ form.username.id_for_label }}">Username</label>
+                {{ form.username }}
             </div>
+            <div class="login-field">
+                <label for="{{ form.password.id_for_label }}">Password</label>
+                {{ form.password }}
+            </div>
+            <button type="submit" class="login-btn" id="login-submit-btn">Sign In</button>
+        </form>
+
+        <div class="login-links">
+            <a href="{% url 'workshop_app:register' %}">New around here? Create an account</a>
+            <a href="{% url 'password_reset' %}">Forgot your password?</a>
         </div>
     </div>
+
+    {# React-powered stats banner — rendered via CDN React + Babel #}
+    <div id="react-stats-banner"></div>
+</div>
+
+<script type="text/babel">
+    const { useState, useEffect } = React;
+
+    function AnimatedCounter({ target, duration = 1800 }) {
+        const [count, setCount] = useState(0);
+        useEffect(() => {
+            let start = 0;
+            const step = target / (duration / 16);
+            const timer = setInterval(() => {
+                start += step;
+                if (start >= target) {
+                    setCount(target);
+                    clearInterval(timer);
+                } else {
+                    setCount(Math.floor(start));
+                }
+            }, 16);
+            return () => clearInterval(timer);
+        }, [target]);
+        return React.createElement('span', null, count.toLocaleString());
+    }
+
+    function StatCard({ icon, value, label, color }) {
+        return React.createElement('div', {
+            style: {
+                background: '#fff',
+                borderRadius: '14px',
+                padding: '1.4rem 1.2rem',
+                textAlign: 'center',
+                boxShadow: '0 4px 18px rgba(0,0,0,0.07)',
+                flex: '1',
+                minWidth: '130px',
+                transition: 'transform 0.2s',
+            },
+            onMouseEnter: e => e.currentTarget.style.transform = 'translateY(-4px)',
+            onMouseLeave: e => e.currentTarget.style.transform = 'translateY(0)',
+        }, [
+            React.createElement('div', {
+                key: 'icon',
+                style: {
+                    fontSize: '2rem', marginBottom: '0.5rem'
+                }
+            }, icon),
+            React.createElement('div', {
+                key: 'value',
+                style: {
+                    fontSize: '1.9rem',
+                    fontWeight: '700',
+                    color: color,
+                    lineHeight: '1.1',
+                }
+            }, React.createElement(AnimatedCounter, { target: value })),
+            React.createElement('div', {
+                key: 'label',
+                style: {
+                    fontSize: '0.82rem',
+                    color: '#7f8c8d',
+                    marginTop: '5px',
+                    fontWeight: '500',
+                }
+            }, label)
+        ]);
+    }
+
+    function PlatformBanner() {
+        const stats = [
+            { icon: '🎓', value: 320, label: 'Workshops Conducted', color: '#4CAF50' },
+            { icon: '🏫', value: 180, label: 'Institutes Reached', color: '#2196F3' },
+            { icon: '👨‍💻', value: 12000, label: 'Students Trained', color: '#9C27B0' },
+            { icon: '📍', value: 28, label: 'States Covered', color: '#FF9800' },
+        ];
+
+        return React.createElement('div', {
+            style: {
+                background: 'linear-gradient(135deg, #f8fffe 0%, #f0f8f0 100%)',
+                borderRadius: '16px',
+                padding: '2rem 1.5rem',
+                boxShadow: '0 4px 24px rgba(76,175,80,0.10)',
+                border: '1px solid #e8f5e9',
+                marginBottom: '1.5rem',
+            }
+        }, [
+            React.createElement('p', {
+                key: 'heading',
+                style: {
+                    textAlign: 'center',
+                    fontWeight: '700',
+                    color: '#2c3e50',
+                    fontSize: '1.05rem',
+                    marginBottom: '1.4rem',
+                    letterSpacing: '0.2px',
+                }
+            }, '📊 FOSSEE Workshops at a Glance'),
+            React.createElement('div', {
+                key: 'stats',
+                style: {
+                    display: 'flex',
+                    gap: '1rem',
+                    flexWrap: 'wrap',
+                    justifyContent: 'center',
+                }
+            }, stats.map((s, i) =>
+                React.createElement(StatCard, { key: i, ...s })
+            )),
+            React.createElement('p', {
+                key: 'tagline',
+                style: {
+                    textAlign: 'center',
+                    color: '#95a5a6',
+                    fontSize: '0.8rem',
+                    marginTop: '1.2rem',
+                    marginBottom: '0',
+                }
+            }, 'Powered by FOSSEE, IIT Bombay \u00b7 Free & Open Source Software for Science and Engineering Education')
+        ]);
+    }
+
+    const domContainer = document.getElementById('react-stats-banner');
+    const root = ReactDOM.createRoot(domContainer);
+    root.render(React.createElement(PlatformBanner));
+</script>
 {% endblock %}
