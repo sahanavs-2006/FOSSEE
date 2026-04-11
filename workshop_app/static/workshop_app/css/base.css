@@ -75,12 +75,12 @@ body {
     box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
 }
 
-/* Form Styling */
+/* Main layouts */
 #id_workshop_type, #id_state, #id_sort, .form-control {
     border-radius: 8px;
     border: 1px solid #ced4da;
     padding: 12px 15px !important;
-    height: 64px !important; /* Extra large to prevent any clipping */
+    height: 64px !important; 
     line-height: normal !important;
     transition: all 0.2s;
     background-color: #fafafa;
@@ -127,7 +127,7 @@ label {
     vertical-align: middle;
 }
 
-/* Mobile Responsiveness */
+/* Mobile */
 @media (max-width: 768px) {
     .base-content {
         padding-top: 5em;
