@@ -1,44 +1,257 @@
 {% extends 'workshop_app/base.html' %}
 
-	{% block title %}
-		Register - FOSSEE Workshops
-	{% endblock %}
+{% block title %}
+    Register — FOSSEE Workshops
+{% endblock %}
 
 {% block content %}
-
-	<style type="text/css">
-    	label.required::after {
-    	content: "*";
-    	color: red;
-		}
-
-		.errorlist {
-      color: red;
+<style>
+    .register-wrapper {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 1rem;
     }
-	</style>
+    .register-card {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+        padding: 2.5rem 2.5rem 2rem 2.5rem;
+        margin-bottom: 2rem;
+    }
+    .register-card h2 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 0.3rem;
+    }
+    .register-card .subtitle {
+        color: #7f8c8d;
+        font-size: 0.95rem;
+        margin-bottom: 2rem;
+    }
+    .register-divider {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #bdc3c7;
+        margin: 1.5rem 0 1rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .register-divider::before,
+    .register-divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: #e8ecef;
+    }
+    .field-group {
+        margin-bottom: 1.2rem;
+    }
+    .field-group label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #34495e;
+        margin-bottom: 6px;
+    }
+    .field-group label .req {
+        color: #e74c3c;
+        margin-left: 2px;
+    }
+    .field-group input,
+    .field-group select {
+        width: 100%;
+        padding: 11px 14px;
+        border: 1.5px solid #dce1e7;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-family: 'Inter', sans-serif;
+        background: #fafbfc;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        color: #2c3e50;
+        box-sizing: border-box;
+    }
+    .field-group input:focus,
+    .field-group select:focus {
+        outline: none;
+        border-color: #4CAF50;
+        box-shadow: 0 0 0 3px rgba(76,175,80,0.12);
+        background: #fff;
+    }
+    .field-hint {
+        font-size: 0.78rem;
+        color: #95a5a6;
+        margin-top: 4px;
+    }
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 5px 0 0 0;
+    }
+    .errorlist li {
+        font-size: 0.8rem;
+        color: #e74c3c;
+        padding: 3px 0;
+    }
+    .field-error input,
+    .field-error select {
+        border-color: #e74c3c !important;
+    }
+    .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+    .register-btn {
+        width: 100%;
+        padding: 13px;
+        background: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+        margin-top: 0.5rem;
+        font-family: 'Inter', sans-serif;
+    }
+    .register-btn:hover {
+        background: #43A047;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 14px rgba(76,175,80,0.3);
+    }
+    .login-link {
+        text-align: center;
+        margin-top: 1.2rem;
+        font-size: 0.9rem;
+        color: #7f8c8d;
+    }
+    .login-link a {
+        color: #4CAF50;
+        font-weight: 600;
+        text-decoration: none;
+    }
+    .login-link a:hover { text-decoration: underline; }
 
-	<div class="container">
-		<div class="row justify-content-center">
-			<div class="col-md-8">
-				<div class="card">
-					<div class="card-body">
-						<h1 class="h4 mb-3">Coordinator Registration</h1>
-						<form action="" method="post" aria-label="Registration form">
-							{% csrf_token %}
-							<div class="table-responsive">
-								<table class="table table-bordered">
-									{{ form.as_table }}
-								</table>
-							</div>
-							<button class="btn btn-primary btn-block" type="submit">Register</button>
-						</form>
-						<hr>
-						<div class="text-center">
-							<a href="{% url 'workshop_app:login' %}">Already have an account? Sign in</a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+    @media (max-width: 600px) {
+        .register-card { padding: 1.5rem 1rem; }
+        .two-col { grid-template-columns: 1fr; }
+    }
+</style>
+
+<div class="register-wrapper">
+    <div class="register-card">
+        <h2>Create an Account</h2>
+        <p class="subtitle">Register as a Workshop Coordinator on FOSSEE</p>
+
+        {% if form.errors %}
+            <div class="alert alert-danger" role="alert">
+                <strong>Please fix the errors below and try again.</strong>
+            </div>
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            <div class="register-divider">Account Details</div>
+
+            <div class="field-group {% if form.username.errors %}field-error{% endif %}">
+                <label for="{{ form.username.id_for_label }}">Username <span class="req">*</span></label>
+                {{ form.username }}
+                {% if form.username.help_text %}<p class="field-hint">{{ form.username.help_text }}</p>{% endif %}
+                {% if form.username.errors %}<ul class="errorlist">{% for e in form.username.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            <div class="field-group {% if form.email.errors %}field-error{% endif %}">
+                <label for="{{ form.email.id_for_label }}">Email <span class="req">*</span></label>
+                {{ form.email }}
+                {% if form.email.errors %}<ul class="errorlist">{% for e in form.email.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            <div class="two-col">
+                <div class="field-group {% if form.password.errors %}field-error{% endif %}">
+                    <label for="{{ form.password.id_for_label }}">Password <span class="req">*</span></label>
+                    {{ form.password }}
+                    {% if form.password.errors %}<ul class="errorlist">{% for e in form.password.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+                <div class="field-group {% if form.confirm_password.errors %}field-error{% endif %}">
+                    <label for="{{ form.confirm_password.id_for_label }}">Confirm Password <span class="req">*</span></label>
+                    {{ form.confirm_password }}
+                    {% if form.confirm_password.errors %}<ul class="errorlist">{% for e in form.confirm_password.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+            </div>
+
+            <div class="register-divider">Personal Info</div>
+
+            <div class="field-group {% if form.title.errors %}field-error{% endif %}">
+                <label for="{{ form.title.id_for_label }}">Title <span class="req">*</span></label>
+                {{ form.title }}
+                {% if form.title.errors %}<ul class="errorlist">{% for e in form.title.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            <div class="two-col">
+                <div class="field-group {% if form.first_name.errors %}field-error{% endif %}">
+                    <label for="{{ form.first_name.id_for_label }}">First Name <span class="req">*</span></label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}<ul class="errorlist">{% for e in form.first_name.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+                <div class="field-group {% if form.last_name.errors %}field-error{% endif %}">
+                    <label for="{{ form.last_name.id_for_label }}">Last Name <span class="req">*</span></label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}<ul class="errorlist">{% for e in form.last_name.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+            </div>
+
+            <div class="field-group {% if form.phone_number.errors %}field-error{% endif %}">
+                <label for="{{ form.phone_number.id_for_label }}">Phone Number <span class="req">*</span></label>
+                {{ form.phone_number }}
+                <p class="field-hint">10-digit mobile number, e.g. 9876543210</p>
+                {% if form.phone_number.errors %}<ul class="errorlist">{% for e in form.phone_number.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            <div class="register-divider">Academic &amp; Location</div>
+
+            <div class="field-group {% if form.institute.errors %}field-error{% endif %}">
+                <label for="{{ form.institute.id_for_label }}">Institute / Organization <span class="req">*</span></label>
+                {{ form.institute }}
+                <p class="field-hint">{{ form.institute.help_text }}</p>
+                {% if form.institute.errors %}<ul class="errorlist">{% for e in form.institute.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            <div class="two-col">
+                <div class="field-group {% if form.department.errors %}field-error{% endif %}">
+                    <label for="{{ form.department.id_for_label }}">Department <span class="req">*</span></label>
+                    {{ form.department }}
+                    {% if form.department.errors %}<ul class="errorlist">{% for e in form.department.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+                <div class="field-group {% if form.location.errors %}field-error{% endif %}">
+                    <label for="{{ form.location.id_for_label }}">City / Place <span class="req">*</span></label>
+                    {{ form.location }}
+                    {% if form.location.errors %}<ul class="errorlist">{% for e in form.location.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+            </div>
+
+            <div class="two-col">
+                <div class="field-group {% if form.state.errors %}field-error{% endif %}">
+                    <label for="{{ form.state.id_for_label }}">State <span class="req">*</span></label>
+                    {{ form.state }}
+                    {% if form.state.errors %}<ul class="errorlist">{% for e in form.state.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+                <div class="field-group {% if form.how_did_you_hear_about_us.errors %}field-error{% endif %}">
+                    <label for="{{ form.how_did_you_hear_about_us.id_for_label }}">How did you hear about us? <span class="req">*</span></label>
+                    {{ form.how_did_you_hear_about_us }}
+                    {% if form.how_did_you_hear_about_us.errors %}<ul class="errorlist">{% for e in form.how_did_you_hear_about_us.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+            </div>
+
+            <button type="submit" class="register-btn">Create Account</button>
+        </form>
+
+        <p class="login-link">Already have an account? <a href="{% url 'workshop_app:login' %}">Sign in</a></p>
+    </div>
+</div>
 {% endblock %}
