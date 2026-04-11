@@ -47,6 +47,13 @@ Open http://127.0.0.1:8000/ in your browser.
 | Before | After |
 |--------|-------|
 | ![Before Register](docs/before_register.png) | ![After Register](docs/after_register.png) |
+|-------------|------------|
+
+### Statistics Page
+
+| Before | After |
+|--------|-------|
+| ![Before Stats](docs/before_stats.png) | ![After Stats](docs/after_stats.png) |
 
 ---
 

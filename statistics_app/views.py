@@ -58,7 +58,7 @@ def workshop_public_stats(request):
         if workshoptype:
             workshops = workshops.filter(workshop_type_id=workshoptype)
     else:
-        today = timezone.now()
+        today = timezone.now().date()
         upto = today + dt.timedelta(days=15)
         workshops = Workshop.objects.filter(
             date__range=(today, upto), status=1

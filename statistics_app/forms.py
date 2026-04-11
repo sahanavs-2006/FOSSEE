@@ -41,6 +41,7 @@ class FilterForm(forms.Form):
                             if "show_workshops" in kwargs else None)
         sort = kwargs.pop("sort") if "sort" in kwargs else None
         super(FilterForm, self).__init__(*args, **kwargs)
+        self.fields["workshop_type"].queryset = WorkshopType.objects.all()
         self.fields["from_date"].initial = start
         self.fields["to_date"].initial = end
         self.fields["state"].initial = selected_state
